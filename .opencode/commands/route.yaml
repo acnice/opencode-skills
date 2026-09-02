@@ -1,0 +1,40 @@
+---
+name: route
+description: Invokes the omni_route skill to analyze and delegate any user query to the optimal specialized agent.
+agent: build
+---
+
+# Route Command
+
+Routes any user query through the omni_route skill for intelligent agent delegation.
+
+## Usage
+
+```
+/route <your question or task>
+```
+
+## Examples
+
+```
+/route Create a business plan for a SaaS startup targeting Australian SMBs
+/route Debug this TypeScript error: Cannot find module '@prisma/client'
+/route Summarize the key points from our last 3 conversations
+/route Design a mobile app onboarding flow with 3 screens
+/route Find all documents mentioning "GDPR compliance" in the knowledge base
+```
+
+## Behavior
+
+1. Invokes `omni_route` skill
+2. Skill classifies the task and selects the best agent
+3. Executes the agent with full context
+4. Returns the agent's output with routing metadata
+
+## Routing Transparency
+
+Output includes:
+- 🔀 Routing decision (category → agent)
+- Reason for selection
+- Context token estimate
+- Any subagent chaining that occurred
