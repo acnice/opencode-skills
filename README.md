@@ -8,6 +8,10 @@ A collection of reusable skills for [opencode](https://opencode.ai) — speciali
 |-------|-------------|----------|
 | **business-idea-planner** | Transforms business ideas into revenue-optimised, AI-enhanced, legally-aware implementation plans tailored for Australia | Refining business concepts, planning SaaS/platform launches, validating ideas for the Australian market |
 | **omni_route** | Routes user requests to the optimal agent based on task classification (planning, coding, lightweight, multimodal, retrieval) | All incoming requests to delegate to specialized agents with token-aware fallback and model fallback chains |
+| **grilling** | Stress-test a plan, decision, or idea using adversarial questioning. Build a dependency-ordered design tree, prioritize questions by importance, merge similar decisions, and auto-select recommended answers | "grill my plan", "stress test this", "challenge my idea", "poke holes in this" |
+| **code-review** | Two-axis review (Standards + Spec) of all changes since a fixed point. Runs parallel sub-agents for React/TS/CDK/AWS/GitHub Actions standards and spec compliance | "review since main", "code review this PR", "audit this diff" |
+| **writing-plans** | Create comprehensive, implementation-ready plans with TDD-driven tasks, exact file paths, commands, and expected outputs. Designed for engineers with minimal context | "make a plan", "write a plan", "implementation plan", "how do I build this" |
+| **implement-feature** | Implement features using community-best patterns: TypeScript strict, React hooks, CDK constructs, DynamoDB, GitHub Actions, Jest/RTL, ESLint/Prettier, pre-commit hooks. Mandatory review-before-commit | "implement this feature", "build this", "add endpoint", "cdk stack change" |
 
 ---
 
@@ -39,6 +43,10 @@ git submodule add https://github.com/your-org/opencode-skills.git .opencode/skil
 mkdir -p .opencode/skills
 ln -s ../skills/opencode-skills/.opencode/skills/business-idea-planner .opencode/skills/business-idea-planner
 ln -s ../skills/opencode-skills/.opencode/skills/omni_route .opencode/skills/omni_route
+ln -s ../skills/opencode-skills/.opencode/skills/grilling .opencode/skills/grilling
+ln -s ../skills/opencode-skills/.opencode/skills/code-review .opencode/skills/code-review
+ln -s ../skills/opencode-skills/.opencode/skills/writing-plans .opencode/skills/writing-plans
+ln -s ../skills/opencode-skills/.opencode/skills/implement-feature .opencode/skills/implement-feature
 ```
 
 ### Method 3: npm/yarn/pnpm Package (For Distribution)
