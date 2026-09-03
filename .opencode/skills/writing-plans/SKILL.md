@@ -1,3 +1,4 @@
+---
 name: writing-plans
 description: >
   Create comprehensive, implementation-ready plans for multi-step engineering
@@ -25,6 +26,7 @@ triggers:
   - "implementation plan"
   - "how do I build this"
   - "plan this feature"
+---
 
 instructions:
   # --- ANNOUNCEMENT ---

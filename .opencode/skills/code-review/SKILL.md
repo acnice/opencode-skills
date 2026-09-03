@@ -1,3 +1,4 @@
+---
 name: code-review
 description: >
   Perform a two-axis review of all changes since a fixed point (commit, branch,
@@ -16,6 +17,7 @@ capabilities:
   - git_operations
   - cloud_architecture_review
   - frontend_review
+---
 
 triggers:
   - "review since"

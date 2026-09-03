@@ -1,3 +1,4 @@
+---
 name: grilling
 description: >
   Stress-test a plan, decision, or idea using adversarial questioning.
@@ -12,6 +13,7 @@ capabilities:
   - design_tree_construction
   - decision_prioritization
   - similarity_detection
+---
 
 triggers:
   - "grill"

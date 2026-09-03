@@ -1,3 +1,4 @@
+---
 name: implement-feature
 description: >
   Implement features using the strongest patterns adopted across popular
@@ -25,6 +26,7 @@ triggers:
   - "add endpoint"
   - "add page"
   - "cdk stack change"
+---
 
 instructions:
   # --- PRECONDITIONS ---
