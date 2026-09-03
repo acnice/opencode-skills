@@ -1,0 +1,7 @@
+{
+  "name": "fast-agent",
+  "description": "Fast responses, summaries, and lightweight tasks.",
+  "model": "mistral-nemotron",
+  "fallbacks": ["nemotron-lightning"],
+  "skills": ["summarize", "explain"]
+}

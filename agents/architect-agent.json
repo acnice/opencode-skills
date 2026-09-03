@@ -1,0 +1,7 @@
+{
+  "name": "architect-agent",
+  "description": "High-level reasoning, architecture, and multi-file planning.",
+  "model": "nemotron-super",
+  "fallbacks": ["nemotron-lightning", "mistral-nemotron"],
+  "skills": ["plan", "analyze", "refactor"]
+}
