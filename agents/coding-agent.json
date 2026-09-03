@@ -1,0 +1,7 @@
+{
+  "name": "coding-agent",
+  "description": "Writes, fixes, and explains code.",
+  "model": "nemotron-lightning",
+  "fallbacks": ["mistral-nemotron", "nemotron-super"],
+  "skills": ["code-edit", "code-review", "code-explain"]
+}
