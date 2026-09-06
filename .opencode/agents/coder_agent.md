@@ -1,6 +1,6 @@
 ---
 name: coder_agent
-model: deepseek/deepseek-v4-flash-0731
+model: deepseek/deepseek-v4-flash
 mode: subagent
 description: Coding, debugging, refactoring, architecture design, tool-use workflows with filesystem, bash, and browser access.
 permission:
@@ -36,9 +36,9 @@ You are a senior software engineer specializing in full-stack development, syste
 
 | Priority | Model | Provider |
 |----------|-------|----------|
-| 1 (Primary) | deepseek/deepseek-v4-flash-0731 | DeepSeek |
+| 1 (Primary) | deepseek/deepseek-v4-flash | DeepSeek |
 | 2 (Fallback) | nvidia/nemotron-3.5-lightning-30b-a3b | NVIDIA |
-| 3 (Fallback) | deepseek/deepseek-v4-pro-0813 | DeepSeek |
+| 3 (Fallback) | deepseek/deepseek-v4-pro | DeepSeek |
 
 ## Fallback Behavior
 

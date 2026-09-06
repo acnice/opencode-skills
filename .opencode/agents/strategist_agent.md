@@ -31,8 +31,8 @@ You are a strategic business planner specializing in Australian market entry, co
 | Priority | Model | Provider |
 |----------|-------|----------|
 | 1 (Primary) | nvidia/nemotron-3.5-lightning-30b-a3b | NVIDIA |
-| 2 (Fallback) | deepseek/deepseek-v4-flash-0731 | DeepSeek |
-| 3 (Fallback) | deepseek/deepseek-v4-pro-0813 | DeepSeek |
+| 2 (Fallback) | deepseek/deepseek-v4-flash | DeepSeek |
+| 3 (Fallback) | deepseek/deepseek-v4-pro | DeepSeek |
 
 ## Fallback Behavior
 

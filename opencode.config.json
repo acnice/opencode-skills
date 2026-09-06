@@ -1,17 +1,15 @@
 {
+  "$schema": "https://opencode.ai/config.json",
   "providers": {
     "nvidia": {
       "baseURL": "https://integrate.api.nvidia.com/v1",
       "apiKey": "${NVIDIA_API_KEY}",
       "mode": "raw"
     },
-    "anthropic": {
-      "baseURL": "https://api.anthropic.com/v1",
-      "apiKey": "${ANTHROPIC_API_KEY}"
-    },
-    "openai": {
-      "baseURL": "https://api.openai.com/v1",
-      "apiKey": "${OPENAI_API_KEY}"
+    "deepseek": {
+      "baseURL": "https://api.deepseek.com",
+      "apiKey": "${DEEPSEEK_API_KEY}",
+      "mode": "raw"
     }
   },
   "models": {
@@ -23,29 +21,17 @@
       "provider": "nvidia",
       "model": "nvidia/nemotron-3.5-lightning-30b-a3b"
     },
-    "nemotron-super": {
-      "provider": "nvidia",
-      "model": "nvidia/nemotron-3-super-120b-a12b"
+    "deepseek-flash": {
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash"
     },
-    "mistral-nemotron": {
-      "provider": "nvidia",
-      "model": "mistralai/mistral-nemotron"
+    "deepseek-pro": {
+      "provider": "deepseek",
+      "model": "deepseek-v4-pro"
     },
-    "claude-sonnet": {
-      "provider": "anthropic",
-      "model": "claude-3-5-sonnet-20241022"
-    },
-    "claude-haiku": {
-      "provider": "anthropic",
-      "model": "claude-3-5-haiku-20241022"
-    },
-    "gpt-4o": {
-      "provider": "openai",
-      "model": "gpt-4o-2024-11-20"
-    },
-    "gpt-4o-mini": {
-      "provider": "openai",
-      "model": "gpt-4o-mini-2024-07-18"
+    "deepseek-vision": {
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash-vision-exp"
     }
   },
   "agents": {
@@ -63,13 +49,13 @@
     },
     "lightweight_agent": {
       "type": "subagent",
-      "model": "gpt-4o-mini",
+      "model": "nemotron-lightning",
       "system": "You are a concise assistant for quick answers, summaries, explanations, and definitions. Be brief (1-3 sentences). No preamble/postamble. Direct answers only. Use for: 'what is', 'brief', 'tl;dr', simple questions.",
       "tools": ["read", "grep", "glob"]
     },
     "vision_agent": {
       "type": "subagent",
-      "model": "claude-sonnet",
+      "model": "deepseek-vision",
       "system": "You are a UI/UX designer and visual thinker. You excel at: designing mockups, creating diagrams (Mermaid/PlantUML), describing visual layouts, screen designs, user flows, and chart/graph specifications. Output textual descriptions, ASCII diagrams, or Mermaid code.",
       "tools": ["read", "write", "edit", "glob", "grep", "bash"]
     },

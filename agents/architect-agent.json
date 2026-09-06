@@ -2,7 +2,7 @@
   "name": "strategist_agent",
   "description": "High-level reasoning, architecture, business planning, and multi-step strategy.",
   "model": "nemotron-ultra",
-  "fallbacks": ["nemotron-lightning", "mistral-nemotron", "claude-sonnet"],
+  "fallbacks": ["nemotron-lightning", "deepseek-flash", "deepseek-pro"],
   "skills": ["make-plan", "business-idea-planner", "analyze", "architect"],
   "tools": ["read", "write", "edit", "glob", "grep", "bash", "webfetch", "task"],
   "useFor": ["planning", "architecture", "roadmap", "compliance", "feature-ideation", "legal"]

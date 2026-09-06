@@ -56,11 +56,11 @@ Each agent has a primary model with automatic fallback on failure:
 
 | Agent | Primary | Fallback 1 | Fallback 2 |
 |-------|---------|------------|------------|
-| **strategist_agent** | nemotron-3-ultra-550b | nemotron-3.5-lightning-30b | mistral-nemotron |
-| **coder_agent** | nemotron-3.5-lightning-30b | nemotron-3-ultra-550b | mistral-nemotron |
-| **lightweight_agent** | nemotron-3.5-lightning-30b | nemotron-3-ultra-550b | mistral-nemotron |
-| **vision_agent** | nemotron-3-ultra-550b | nemotron-3.5-lightning-30b | mistral-nemotron |
-| **retrieval_agent** | nemotron-3.5-lightning-30b | nemotron-3-ultra-550b | mistral-nemotron |
+| **strategist_agent** | nemotron-3-ultra-550b | nemotron-3.5-lightning-30b | deepseek-flash (paid) |
+| **coder_agent** | nemotron-3.5-lightning-30b | nemotron-3-ultra-550b | deepseek-flash (paid) |
+| **lightweight_agent** | nemotron-3.5-lightning-30b | nemotron-3-ultra-550b | deepseek-flash (paid) |
+| **vision_agent** | nemotron-3-ultra-550b | nemotron-3.5-lightning-30b | deepseek-flash (paid) |
+| **retrieval_agent** | nemotron-3.5-lightning-30b | nemotron-3-ultra-550b | deepseek-flash (paid) |
 
 **Fallback Triggers:** Provider overload (503), rate limit (429), timeout, network failure, model error (context exceeded, invalid request).
 
@@ -80,6 +80,18 @@ Each agent has a primary model with automatic fallback on failure:
 
 ## Configuring Models for Specific Work
 
+The routing stack uses a fixed pool of five models (see `opencode.config.json` in this repo):
+
+| Alias | Provider | Tier | Model ID |
+|-------|----------|------|----------|
+| nemotron-ultra | nvidia | free | nvidia/nemotron-3-ultra-550b-a55b |
+| nemotron-lightning | nvidia | free | nvidia/nemotron-3.5-lightning-30b-a3b |
+| deepseek-flash | deepseek | paid | deepseek-v4-flash |
+| deepseek-pro | deepseek | paid | deepseek-v4-pro |
+| deepseek-vision | deepseek | paid | deepseek-v4-flash-vision-exp |
+
+Free tier (Nemotron lightning/ultra) is the default for most work. DeepSeek (paid) is only used for vision or when context exceeds the 256k Nemotron window and the 1M DeepSeek window is required.
+
 ### 1. Global Model Configuration (opencode.json)
 
 Define your models once, reference by alias:
@@ -89,26 +101,21 @@ Define your models once, reference by alias:
   "providers": {
     "nvidia": {
       "baseURL": "https://integrate.api.nvidia.com/v1",
-      "apiKey": "nvapi-...",
+      "apiKey": "${NVIDIA_API_KEY}",
       "mode": "raw"
     },
-    "anthropic": {
-      "baseURL": "https://api.anthropic.com/v1",
-      "apiKey": "sk-ant-..."
-    },
-    "openai": {
-      "baseURL": "https://api.openai.com/v1",
-      "apiKey": "sk-..."
+    "deepseek": {
+      "baseURL": "https://api.deepseek.com",
+      "apiKey": "${DEEPSEEK_API_KEY}",
+      "mode": "raw"
     }
   },
   "models": {
     "nemotron-ultra": { "provider": "nvidia", "model": "nvidia/nemotron-3-ultra-550b-a55b" },
     "nemotron-lightning": { "provider": "nvidia", "model": "nvidia/nemotron-3.5-lightning-30b-a3b" },
-    "mistral-nemotron": { "provider": "nvidia", "model": "mistralai/mistral-nemotron" },
-    "claude-sonnet": { "provider": "anthropic", "model": "claude-3-5-sonnet-20241022" },
-    "claude-haiku": { "provider": "anthropic", "model": "claude-3-5-haiku-20241022" },
-    "gpt-4o": { "provider": "openai", "model": "gpt-4o-2024-11-20" },
-    "gpt-4o-mini": { "provider": "openai", "model": "gpt-4o-mini-2024-07-18" }
+    "deepseek-flash": { "provider": "deepseek", "model": "deepseek-v4-flash" },
+    "deepseek-pro": { "provider": "deepseek", "model": "deepseek-v4-pro" },
+    "deepseek-vision": { "provider": "deepseek", "model": "deepseek-v4-flash-vision-exp" }
   }
 }
 ```
@@ -132,12 +139,12 @@ Assign the best model for each agent's workload:
     },
     "lightweight_agent": {
       "type": "subagent",
-      "model": "gpt-4o-mini",           // Cheap, fast for simple Q&A
+      "model": "nemotron-lightning",    // Cheap, fast for simple Q&A
       "system": "..."
     },
     "vision_agent": {
       "type": "subagent",
-      "model": "claude-sonnet",         // Strong visual reasoning
+      "model": "deepseek-vision",       // Vision-capable (paid)
       "system": "..."
     },
     "retrieval_agent": {
@@ -158,26 +165,24 @@ Assign the best model for each agent's workload:
 
 | Agent | Workload Characteristics | Recommended Model Traits | Example Models |
 |-------|-------------------------|--------------------------|----------------|
-| **strategist_agent** | Deep analysis, multi-step planning, legal/compliance, large context | High reasoning, large context window (100k+) | nemotron-3-ultra, claude-sonnet, gpt-4o |
-| **coder_agent** | Code generation, debugging, refactoring, API design | Fast inference, code-specialized, strict output | nemotron-lightning, claude-sonnet, gpt-4o |
-| **lightweight_agent** | Summaries, definitions, quick answers | Low latency, cheap, concise | gpt-4o-mini, claude-haiku, nemotron-lightning |
-| **vision_agent** | Diagram design, UI mockups, visual reasoning | Multimodal or strong text-to-diagram | claude-sonnet, gpt-4o, nemotron-ultra |
-| **retrieval_agent** | Code search, pattern matching, synthesis | Fast, good at synthesis | nemotron-lightning, claude-haiku |
-| **omni_router** | Classification, token estimation, routing logic | Fast, reliable classification | nemotron-lightning, gpt-4o-mini |
+| **strategist_agent** | Deep analysis, multi-step planning, legal/compliance, large context | High reasoning, large context window | nemotron-ultra, deepseek-pro |
+| **coder_agent** | Code generation, debugging, refactoring, API design | Fast inference, code-specialized, strict output | nemotron-lightning, deepseek-flash |
+| **lightweight_agent** | Summaries, definitions, quick answers | Low latency, cheap, concise | nemotron-lightning |
+| **vision_agent** | Diagram design, UI mockups, visual reasoning | Vision-capable | deepseek-vision, nemotron-ultra |
+| **retrieval_agent** | Code search, pattern matching, synthesis | Fast, good at synthesis | nemotron-lightning, deepseek-flash |
+| **omni_router** | Classification, token estimation, routing logic | Fast, reliable classification | nemotron-lightning, deepseek-flash |
 
 ### 4. Environment-Specific Overrides
 
-Use different models for dev vs prod:
+Use different models for dev vs prod (both within the allowed pool):
 
 ```json
 // .opencode/opencode.json (committed)
 {
   "models": {
-    "strategist-model": { "provider": "nvidia", "model": "nvidia/nemotron-3-ultra-550b-a55b" },
     "coder-model": { "provider": "nvidia", "model": "nvidia/nemotron-3.5-lightning-30b-a3b" }
   },
   "agents": {
-    "strategist_agent": { "model": "strategist-model" },
     "coder_agent": { "model": "coder-model" }
   }
 }
@@ -185,8 +190,7 @@ Use different models for dev vs prod:
 // .opencode/opencode.local.json (gitignored - per-developer overrides)
 {
   "models": {
-    "strategist-model": { "provider": "anthropic", "model": "claude-3-5-sonnet-20241022" },
-    "coder-model": { "provider": "openai", "model": "gpt-4o-2024-11-20" }
+    "coder-model": { "provider": "deepseek", "model": "deepseek-v4-flash" }
   }
 }
 ```
@@ -195,10 +199,11 @@ Use different models for dev vs prod:
 
 | Strategy | Implementation |
 |----------|----------------|
-| **Tiered models** | Use cheap models (haiku, 4o-mini) for lightweight/retrieval; premium for strategist/coder |
-| **Local dev overrides** | Use `.opencode.local.json` with local Ollama models for free inference |
+| **Free-first default** | Route all small/medium work to Nemotron lightning/ultra (free) |
+| **Paid only when needed** | Use DeepSeek for vision, >256k context, or after free fallbacks are exhausted |
+| **Local dev overrides** | Use `.opencode.local.json` to point specific agents at DeepSeek only in dev |
 | **Request routing** | Route simple Q&A to lightweight_agent automatically |
-| **Context summarization** | Auto-summarize at 900k tokens to avoid premium model costs |
+| **Context summarization** | Auto-summarize at 900k tokens to stay within free model windows |
 
 ---
 
