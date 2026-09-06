@@ -5,13 +5,10 @@
       "apiKey": "${NVIDIA_API_KEY}",
       "mode": "raw"
     },
-    "anthropic": {
-      "baseURL": "https://api.anthropic.com/v1",
-      "apiKey": "${ANTHROPIC_API_KEY}"
-    },
-    "openai": {
-      "baseURL": "https://api.openai.com/v1",
-      "apiKey": "${OPENAI_API_KEY}"
+    "deepseek": {
+      "baseURL": "https://api.deepseek.com",
+      "apiKey": "${DEEPSEEK_API_KEY}",
+      "mode": "raw"
     }
   },
   "models": {
@@ -31,21 +28,17 @@
       "provider": "nvidia",
       "model": "mistralai/mistral-nemotron"
     },
-    "claude-sonnet": {
-      "provider": "anthropic",
-      "model": "claude-3-5-sonnet-20241022"
+    "deepseek-flash": {
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash"
     },
-    "claude-haiku": {
-      "provider": "anthropic",
-      "model": "claude-3-5-haiku-20241022"
+    "deepseek-pro": {
+      "provider": "deepseek",
+      "model": "deepseek-v4-pro"
     },
-    "gpt-4o": {
-      "provider": "openai",
-      "model": "gpt-4o-2024-11-20"
-    },
-    "gpt-4o-mini": {
-      "provider": "openai",
-      "model": "gpt-4o-mini-2024-07-18"
+    "deepseek-vision": {
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash-vision-exp"
     }
   },
   "agents": {
@@ -57,19 +50,19 @@
     },
     "coder_agent": {
       "type": "subagent",
-      "model": "nemotron-lightning",
+      "model": "deepseek-flash",
       "system": "You are a senior software engineer. You excel at: writing production-ready code, debugging, refactoring, API design, database modeling, testing, and deployment. Follow best practices: TDD, strict TypeScript, React hooks rules, AWS CDK patterns, security-first. Write minimal, correct code. Run lint/typecheck/tests before completing.",
       "tools": ["read", "write", "edit", "glob", "grep", "bash", "task"]
     },
     "lightweight_agent": {
       "type": "subagent",
-      "model": "gpt-4o-mini",
+      "model": "mistral-nemotron",
       "system": "You are a concise assistant for quick answers, summaries, explanations, and definitions. Be brief (1-3 sentences). No preamble/postamble. Direct answers only. Use for: 'what is', 'brief', 'tl;dr', simple questions.",
       "tools": ["read", "grep", "glob"]
     },
     "vision_agent": {
       "type": "subagent",
-      "model": "claude-sonnet",
+      "model": "deepseek-vision",
       "system": "You are a UI/UX designer and visual thinker. You excel at: designing mockups, creating diagrams (Mermaid/PlantUML), describing visual layouts, screen designs, user flows, and chart/graph specifications. Output textual descriptions, ASCII diagrams, or Mermaid code.",
       "tools": ["read", "write", "edit", "glob", "grep", "bash"]
     },

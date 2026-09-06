@@ -1,6 +1,6 @@
 ---
 name: omni_route
-description: Routes user requests to the optimal agent based on task classification (coding, reasoning, fast). Handles token-aware fallback, model fallback, and subagent chaining using ONLY NVIDIA models.
+description: Routes user requests to the optimal agent based on task classification (coding, reasoning, fast, multimodal, retrieval). Handles token-aware fallback, model fallback, and subagent chaining using NVIDIA and DeepSeek models.
 ---
 
 # Omni Router Skill
@@ -13,12 +13,15 @@ Analyzes user requests, classifies the task type, selects the appropriate agent,
 |----------|----------|------------|
 | nemotron-lightning | nvidia | 256,000 |
 | nemotron-super | nvidia | 1,000,000 |
+| nemotron-ultra | nvidia | 256,000 |
 | mistral-nemotron | nvidia | 128,000 |
+| deepseek-flash | deepseek | 1,000,000 |
+| deepseek-pro | deepseek | 1,000,000 |
+| deepseek-vision | deepseek | 1,000,000 |
 
 ## Forbidden Models
 
 Never route to:
-- deepseek-v4-pro-0813
 - OCR / ASR / safety / embedding / guardrail models
 
 ## Task Classification
@@ -28,11 +31,13 @@ Never route to:
 | **coding** | code, debug, fix, refactor, function, class, API, script, unit test, implement, build, deploy | coding-agent |
 | **reasoning** | design, architecture, plan, analyze, workflow, strategy, multi-step, roadmap, "how should I", "plan for" | architect-agent |
 | **fast** | summarize, quick, short, simple, explain, define, "what is", "brief", "tl;dr", simple question | fast-agent |
+| **multimodal** | image, screenshot, diagram, mockup, UI, visual, chart, graph, vision | vision-agent |
+| **retrieval** | find, search, locate, grep, glob, "where is", "how does", trace, dependency | retrieval-agent |
 
 ## Routing Logic
 
 1. **Analyze** the user request for intent and complexity
-2. **Classify** into one primary category (coding / reasoning / fast)
+2. **Classify** into one primary category (coding / reasoning / fast / multimodal / retrieval)
 3. **Measure context length** (estimate tokens from conversation history + request)
 4. **Select model** based on routing rules below
 5. **Select agent** based on classification
@@ -44,56 +49,82 @@ Never route to:
 ## Token Limits
 
 - nemotron-super → 1,000,000 tokens
+- nemotron-ultra → 256,000 tokens
 - nemotron-lightning → 256,000 tokens
 - mistral-nemotron → 128,000 tokens
+- deepseek-flash → 1,000,000 tokens
+- deepseek-pro → 1,000,000 tokens
+- deepseek-vision → 1,000,000 tokens
 
 ## Routing Rules
 
 ### 1. Coding Tasks
-Keywords: code, debug, fix, refactor, function, class, API, script, unit test
+Keywords: code, debug, fix, refactor, function, class, API, script, unit test, implement, build, deploy
 
 - If context < 256k tokens → nemotron-lightning
-- If context >= 256k tokens → nemotron-super
+- If context >= 256k tokens → deepseek-flash
 
 Fallbacks:
-- mistral-nemotron
 - nemotron-super
+- deepseek-flash
+- mistral-nemotron
 
 ### 2. Reasoning / Architecture / Planning
-Keywords: design, architecture, plan, analyze, workflow, strategy, multi-step
+Keywords: design, architecture, plan, analyze, workflow, strategy, multi-step, roadmap
 
-- If context < 1M tokens → nemotron-super
-- If context >= 1M tokens → summarize + compress + retry with nemotron-super
+- If context < 1M tokens → nemotron-ultra
+- If context >= 1M tokens → deepseek-pro
 
 Fallbacks:
-- nemotron-lightning
+- nemotron-super
+- deepseek-flash
 - mistral-nemotron
 
 ### 3. Fast / Lightweight Tasks
-Keywords: summarize, quick, short, simple, explain
+Keywords: summarize, quick, short, simple, explain, define, "what is", "brief", "tl;dr"
 
 - Primary → mistral-nemotron
 
 Fallback:
 - nemotron-lightning
 
-### 4. Cost-Aware Routing (applies when context is small)
+### 4. Multimodal / Vision Tasks
+Keywords: image, screenshot, diagram, mockup, UI, visual, chart, graph, vision
+
+- Primary → deepseek-vision
+
+Fallback:
+- nemotron-ultra (text-only fallback)
+
+### 5. Retrieval Tasks
+Keywords: find, search, locate, grep, glob, "where is", "how does", trace, dependency
+
+- If context < 256k tokens → nemotron-lightning
+- If context >= 256k tokens → deepseek-flash
+
+Fallbacks:
+- nemotron-super
+- mistral-nemotron
+
+### 6. Cost-Aware Routing (applies when context is small)
 - If request < 500 chars → mistral-nemotron
 - If request 500–3000 chars → nemotron-lightning
-- If request > 3000 chars → nemotron-super
+- If request > 3000 chars → nemotron-ultra
 
-### 5. Token-Aware Fallback
+### 7. Token-Aware Fallback
 If model returns token-limit error:
 - Switch to next fallback model
 - If context too large → compress + retry
 
-### 6. Model Fallback Chain (per agent)
+### 8. Model Fallback Chain (per agent)
 
-| Agent | Primary | Fallback 1 | Fallback 2 |
-|-------|---------|------------|------------|
-| coding-agent | nemotron-lightning | mistral-nemotron | nemotron-super |
-| architect-agent | nemotron-super | nemotron-lightning | mistral-nemotron |
-| fast-agent | mistral-nemotron | nemotron-lightning | — |
+| Agent | Primary | Fallback 1 | Fallback 2 | Fallback 3 |
+|-------|---------|------------|------------|------------|
+| coding-agent | deepseek-flash | nemotron-lightning | deepseek-pro | nemotron-ultra |
+| architect-agent | deepseek-flash | deepseek-pro | nemotron-ultra | nemotron-lightning |
+| fast-agent | nemotron-lightning | deepseek-flash | — | — |
+| vision-agent | deepseek-vision | nemotron-ultra | — | — |
+| retrieval-agent | nemotron-lightning | nemotron-ultra | deepseek-flash | deepseek-pro |
 
 ### 7. Fallback Trigger Conditions
 

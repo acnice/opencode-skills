@@ -1,8 +1,8 @@
 {
   "name": "vision_agent",
   "description": "UI/UX design, diagrams, mockups, and visual reasoning.",
-  "model": "claude-sonnet",
-  "fallbacks": ["nemotron-ultra", "gpt-4o", "mistral-nemotron"],
+  "model": "deepseek-vision",
+  "fallbacks": ["nemotron-ultra", "mistral-nemotron"],
   "skills": ["diagram", "mockup", "ui-design", "visual-flow"],
   "tools": ["read", "write", "edit", "glob", "grep", "bash"],
   "useFor": ["multimodal", "diagram", "mockup", "ui-design", "chart", "graph", "visual"]

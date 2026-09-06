@@ -28,9 +28,9 @@ You are a fast, concise responder for low-complexity tasks.
 
 | Priority | Model | Provider |
 |----------|-------|----------|
-| 1 (Primary) | nvidia/llama-3.1-nemotron-safety-guard-8b-v3 | NVIDIA |
-| 2 (Fallback) | nvidia/nemotron-3.5-lightning-30b-a3b | NVIDIA |
-| 3 (Fallback) | deepseek/deepseek-v4-flash-0731 | DeepSeek |
+| 1 (Primary) | nvidia/nemotron-3.5-lightning-30b-a3b | NVIDIA |
+| 2 (Fallback) | deepseek/deepseek-v4-flash-0731 | DeepSeek |
+| 3 (Fallback) | nvidia/nemotron-3-ultra-550b-a55b | NVIDIA |
 
 ## Fallback Behavior
 
