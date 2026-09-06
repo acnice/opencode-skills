@@ -2,7 +2,7 @@
   "name": "vision_agent",
   "description": "UI/UX design, diagrams, mockups, and visual reasoning.",
   "model": "deepseek-vision",
-  "fallbacks": ["nemotron-ultra", "mistral-nemotron"],
+  "fallbacks": ["nemotron-ultra", "deepseek-flash"],
   "skills": ["diagram", "mockup", "ui-design", "visual-flow"],
   "tools": ["read", "write", "edit", "glob", "grep", "bash"],
   "useFor": ["multimodal", "diagram", "mockup", "ui-design", "chart", "graph", "visual"]

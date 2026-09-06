@@ -1,4 +1,5 @@
 {
+  "$schema": "https://opencode.ai/config.json",
   "providers": {
     "nvidia": {
       "baseURL": "https://integrate.api.nvidia.com/v1",
@@ -20,21 +21,35 @@
       "provider": "nvidia",
       "model": "nvidia/nemotron-3.5-lightning-30b-a3b"
     },
-    "nemotron-super": {
-      "provider": "nvidia",
-      "model": "nvidia/nemotron-3-super-120b-a12b"
+    "deepseek-flash": {
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash"
     },
-    "mistral-nemotron": {
-      "provider": "nvidia",
-      "model": "mistralai/mistral-nemotron"
+    "deepseek-pro": {
+      "provider": "deepseek",
+      "model": "deepseek-v4-pro"
     },
+    "deepseek-vision": {
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash-vision-exp"
+    }
+  },
+  "agents": {
+    "strategist_agent": {
+      "type": "subagent",
+      "model": "nemotron-ultra",
+      "system": "You are a senior technical strategist. You excel at: business planning, architecture decisions, feature ideation, roadmap creation, legal/compliance analysis, and high-level technical strategy. Think deeply before responding. Ask clarifying questions when requirements are ambiguous. Produce structured, actionable plans with clear rationale.",
+      "tools": ["read", "write", "edit", "glob", "grep", "bash", "webfetch", "task"]
+    },
+    "coder_agent": {
+      "type": "subagent",
       "model": "nemotron-lightning",
       "system": "You are a senior software engineer. You excel at: writing production-ready code, debugging, refactoring, API design, database modeling, testing, and deployment. Follow best practices: TDD, strict TypeScript, React hooks rules, AWS CDK patterns, security-first. Write minimal, correct code. Run lint/typecheck/tests before completing.",
       "tools": ["read", "write", "edit", "glob", "grep", "bash", "task"]
     },
     "lightweight_agent": {
       "type": "subagent",
-      "model": "mistral-nemotron",
+      "model": "nemotron-lightning",
       "system": "You are a concise assistant for quick answers, summaries, explanations, and definitions. Be brief (1-3 sentences). No preamble/postamble. Direct answers only. Use for: 'what is', 'brief', 'tl;dr', simple questions.",
       "tools": ["read", "grep", "glob"]
     },
