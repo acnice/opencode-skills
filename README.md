@@ -45,7 +45,7 @@ ln -s ../skills/opencode-skills/.opencode/skills/business-idea-planner .opencode
 ln -s ../skills/opencode-skills/.opencode/skills/omni_route .opencode/skills/omni_route
 ln -s ../skills/opencode-skills/.opencode/skills/grilling .opencode/skills/grilling
 ln -s ../skills/opencode-skills/.opencode/skills/code-review .opencode/skills/code-review
-ln -s ../skills/opencode-skills/.opencode/skills/writing-plans .opencode/skills/writing-plans
+ln -s ../skills/opencode-skills/.opencode/skills/make-plan .opencode/skills/make-plan
 ln -s ../skills/opencode-skills/.opencode/skills/implement-feature .opencode/skills/implement-feature
 ```
 

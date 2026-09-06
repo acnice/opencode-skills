@@ -1,5 +1,5 @@
 ---
-name: writing-plans
+name: make-plan
 description: >
   Create comprehensive, implementation-ready plans for multi-step engineering
   tasks. Use when a spec or requirements exist and code should not be touched
@@ -130,6 +130,13 @@ instructions:
   - >
     Save the final plan to:
       docs/plans/YYYY-MM-DD-<feature-name>.md
+  - >
+    Ensure the docs/plans directory exists before saving. Create it if needed:
+    `mkdir -p docs/plans`
+  - >
+    Use ISO 8601 date format (YYYY-MM-DD) for consistent sorting.
+  - >
+    Include a plan index file at `docs/plans/README.md` listing all plans with dates and status.
 
   # --- EXECUTION HANDOFF ---
   - >
@@ -146,6 +153,20 @@ instructions:
     - User opens a new session in the worktree  
     - Use @executing-plans  
     - Batch execution with checkpoints
+
+  # --- INDUSTRY STANDARDS & BEST PRACTICES ---
+  - >
+    Incorporate these standards to improve plan quality:
+    - **RFC/ADR Format**: Document architectural decisions with context, decision, and consequences
+    - **Risk Assessment**: Add a "Risks & Mitigations" section per task (technical, security, operational)
+    - **Estimation**: Use story points or t-shirt sizing (XS/S/M/L/XL) for each task
+    - **Dependency Graph**: Map task dependencies explicitly; visualize with Mermaid if complex
+    - **Rollback Plan**: Every task must specify how to revert if it breaks something
+    - **Security/Privacy**: Note data handling, auth boundaries, encryption requirements per task
+    - **Observability**: Define metrics, logs, traces needed for each feature
+    - **Definition of Done**: Explicit checklist per task (tests pass, lint clean, docs updated, reviewed)
+    - **Code Review Checklist**: Include security, performance, accessibility, backward compatibility
+    - **Capacity Planning**: Note resource requirements (CPU, memory, DB connections, API quotas)
 
   # --- LIMITATIONS ---
   - >
