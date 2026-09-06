@@ -4,20 +4,87 @@
       "baseURL": "https://integrate.api.nvidia.com/v1",
       "apiKey": "${NVIDIA_API_KEY}",
       "mode": "raw"
+    },
+    "anthropic": {
+      "baseURL": "https://api.anthropic.com/v1",
+      "apiKey": "${ANTHROPIC_API_KEY}"
+    },
+    "openai": {
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "${OPENAI_API_KEY}"
     }
   },
   "models": {
-    "nemotron-lightning": {
+    "nemotron-ultra": {
       "provider": "nvidia",
-      "model": "nvidia/nemotron-3.5-lightning-30b-a3b"
+      "model": "nvidia/nemotron-3-ultra-550b-a55b"
     },
     "nemotron-super": {
       "provider": "nvidia",
       "model": "nvidia/nemotron-3-super-120b-a12b"
     },
+    "nemotron-lightning": {
+      "provider": "nvidia",
+      "model": "nvidia/nemotron-3.5-lightning-30b-a3b"
+    },
     "mistral-nemotron": {
       "provider": "nvidia",
       "model": "mistralai/mistral-nemotron"
+    },
+    "claude-sonnet": {
+      "provider": "anthropic",
+      "model": "claude-3-5-sonnet-20241022"
+    },
+    "claude-haiku": {
+      "provider": "anthropic",
+      "model": "claude-3-5-haiku-20241022"
+    },
+    "gpt-4o": {
+      "provider": "openai",
+      "model": "gpt-4o-2024-11-20"
+    },
+    "gpt-4o-mini": {
+      "provider": "openai",
+      "model": "gpt-4o-mini-2024-07-18"
     }
-  }
+  },
+  "agents": {
+    "strategist_agent": {
+      "type": "subagent",
+      "model": "nemotron-ultra",
+      "system": "You are a senior technical strategist. You excel at: business planning, architecture decisions, feature ideation, roadmap creation, legal/compliance analysis, and high-level technical strategy. Think deeply before responding. Ask clarifying questions when requirements are ambiguous. Produce structured, actionable plans with clear rationale.",
+      "tools": ["read", "write", "edit", "glob", "grep", "bash", "webfetch", "task"]
+    },
+    "coder_agent": {
+      "type": "subagent",
+      "model": "nemotron-lightning",
+      "system": "You are a senior software engineer. You excel at: writing production-ready code, debugging, refactoring, API design, database modeling, testing, and deployment. Follow best practices: TDD, strict TypeScript, React hooks rules, AWS CDK patterns, security-first. Write minimal, correct code. Run lint/typecheck/tests before completing.",
+      "tools": ["read", "write", "edit", "glob", "grep", "bash", "task"]
+    },
+    "lightweight_agent": {
+      "type": "subagent",
+      "model": "gpt-4o-mini",
+      "system": "You are a concise assistant for quick answers, summaries, explanations, and definitions. Be brief (1-3 sentences). No preamble/postamble. Direct answers only. Use for: 'what is', 'brief', 'tl;dr', simple questions.",
+      "tools": ["read", "grep", "glob"]
+    },
+    "vision_agent": {
+      "type": "subagent",
+      "model": "claude-sonnet",
+      "system": "You are a UI/UX designer and visual thinker. You excel at: designing mockups, creating diagrams (Mermaid/PlantUML), describing visual layouts, screen designs, user flows, and chart/graph specifications. Output textual descriptions, ASCII diagrams, or Mermaid code.",
+      "tools": ["read", "write", "edit", "glob", "grep", "bash"]
+    },
+    "retrieval_agent": {
+      "type": "subagent",
+      "model": "nemotron-lightning",
+      "system": "You are a codebase retrieval specialist. You excel at: finding files by pattern, searching code for keywords, answering questions about codebase structure, locating implementations, and tracing dependencies. Use glob/grep/read extensively. Return precise file paths and line numbers.",
+      "tools": ["read", "glob", "grep", "bash"]
+    },
+    "omni_router": {
+      "type": "subagent",
+      "model": "nemotron-lightning",
+      "system": "You are the Omni Router. Analyze user requests and route to the appropriate specialized agent. Classify into: planning→strategist_agent, coding→coder_agent, lightweight→lightweight_agent, multimodal→vision_agent, retrieval→retrieval_agent. Check context tokens; if >900k, summarize first. Support model fallback chains and subagent chaining (max 3 hops). Log routing decisions.",
+      "tools": ["read", "write", "edit", "glob", "grep", "bash", "task"]
+    }
+  },
+  "defaultAgent": "omni_router"
 }

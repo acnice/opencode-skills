@@ -1,7 +1,9 @@
 {
-  "name": "fast-agent",
-  "description": "Fast responses, summaries, and lightweight tasks.",
-  "model": "mistral-nemotron",
-  "fallbacks": ["nemotron-lightning"],
-  "skills": ["summarize", "explain"]
+  "name": "lightweight_agent",
+  "description": "Fast responses, summaries, quick answers, and definitions.",
+  "model": "gpt-4o-mini",
+  "fallbacks": ["nemotron-lightning", "claude-haiku", "mistral-nemotron"],
+  "skills": ["summarize", "explain", "define"],
+  "tools": ["read", "grep", "glob"],
+  "useFor": ["lightweight", "what-is", "brief", "tl;dr", "simple-question"]
 }

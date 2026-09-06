@@ -15,6 +15,193 @@ A collection of reusable skills for [opencode](https://opencode.ai) — speciali
 
 ---
 
+## omni_route Skill — Deep Dive
+
+The `omni_route` skill implements an intelligent request router that classifies incoming tasks and delegates to specialized agents. This enables optimal model selection per task type and provides resilience through model fallback chains.
+
+### Architecture Overview
+
+```
+User Request
+    │
+    ▼
+┌─────────────────────────────────────┐
+│         Omni Router Agent           │  (omni_router)
+│  • Classifies task type             │
+│  • Estimates context tokens         │
+│  • Selects target agent             │
+│  • Handles fallback chains          │
+└─────────────────────────────────────┘
+    │
+    ├── planning ──────► strategist_agent
+    ├── coding ────────► coder_agent
+    ├── lightweight ──► lightweight_agent
+    ├── multimodal ───► vision_agent
+    └── retrieval ────► retrieval_agent
+```
+
+### Task Classification Rules
+
+| Category | Keywords / Indicators | Target Agent |
+|----------|----------------------|--------------|
+| **planning** | business plan, strategy, legal, compliance, feature ideation, roadmap, architecture decisions, "how should I", "plan for" | strategist_agent |
+| **coding** | code, debug, refactor, implement, API, database, architecture, test, build, deploy, "write a function", "fix this error" | coder_agent |
+| **lightweight** | summarize, quick answer, explain, define, "what is", "brief", "tl;dr", simple question | lightweight_agent |
+| **multimodal** | image, diagram, mockup, UI design, screenshot, visual, chart, graph, "draw", "design a screen" | vision_agent |
+| **retrieval** | search, find, lookup, RAG, embeddings, semantic search, "find documents", "retrieve", "similar to" | retrieval_agent |
+
+### Model Fallback Chains
+
+Each agent has a primary model with automatic fallback on failure:
+
+| Agent | Primary | Fallback 1 | Fallback 2 |
+|-------|---------|------------|------------|
+| **strategist_agent** | nemotron-3-ultra-550b | nemotron-3.5-lightning-30b | mistral-nemotron |
+| **coder_agent** | nemotron-3.5-lightning-30b | nemotron-3-ultra-550b | mistral-nemotron |
+| **lightweight_agent** | nemotron-3.5-lightning-30b | nemotron-3-ultra-550b | mistral-nemotron |
+| **vision_agent** | nemotron-3-ultra-550b | nemotron-3.5-lightning-30b | mistral-nemotron |
+| **retrieval_agent** | nemotron-3.5-lightning-30b | nemotron-3-ultra-550b | mistral-nemotron |
+
+**Fallback Triggers:** Provider overload (503), rate limit (429), timeout, network failure, model error (context exceeded, invalid request).
+
+### Token-Aware Context Management
+
+- **Threshold:** 900k tokens
+- **Action:** If context > threshold, invoke `lightweight_agent` to summarize, then re-route with condensed context
+- **Preserved:** Key facts, decisions, code snippets, file paths
+
+### Subagent Chaining
+
+- **Max hops:** 3 per request
+- **Trigger:** Explicit handoff signals in agent output (e.g., `NEEDS_CODER:`, `NEEDS_STRATEGIST:`)
+- **Loop prevention:** Tracks hop count
+
+---
+
+## Configuring Models for Specific Work
+
+### 1. Global Model Configuration (opencode.json)
+
+Define your models once, reference by alias:
+
+```json
+{
+  "providers": {
+    "nvidia": {
+      "baseURL": "https://integrate.api.nvidia.com/v1",
+      "apiKey": "nvapi-...",
+      "mode": "raw"
+    },
+    "anthropic": {
+      "baseURL": "https://api.anthropic.com/v1",
+      "apiKey": "sk-ant-..."
+    },
+    "openai": {
+      "baseURL": "https://api.openai.com/v1",
+      "apiKey": "sk-..."
+    }
+  },
+  "models": {
+    "nemotron-ultra": { "provider": "nvidia", "model": "nvidia/nemotron-3-ultra-550b-a55b" },
+    "nemotron-lightning": { "provider": "nvidia", "model": "nvidia/nemotron-3.5-lightning-30b-a3b" },
+    "mistral-nemotron": { "provider": "nvidia", "model": "mistralai/mistral-nemotron" },
+    "claude-sonnet": { "provider": "anthropic", "model": "claude-3-5-sonnet-20241022" },
+    "claude-haiku": { "provider": "anthropic", "model": "claude-3-5-haiku-20241022" },
+    "gpt-4o": { "provider": "openai", "model": "gpt-4o-2024-11-20" },
+    "gpt-4o-mini": { "provider": "openai", "model": "gpt-4o-mini-2024-07-18" }
+  }
+}
+```
+
+### 2. Per-Agent Model Assignment
+
+Assign the best model for each agent's workload:
+
+```json
+{
+  "agents": {
+    "strategist_agent": {
+      "type": "subagent",
+      "model": "nemotron-ultra",        // Complex reasoning, large context
+      "system": "..."
+    },
+    "coder_agent": {
+      "type": "subagent",
+      "model": "nemotron-lightning",    // Fast, code-focused
+      "system": "..."
+    },
+    "lightweight_agent": {
+      "type": "subagent",
+      "model": "gpt-4o-mini",           // Cheap, fast for simple Q&A
+      "system": "..."
+    },
+    "vision_agent": {
+      "type": "subagent",
+      "model": "claude-sonnet",         // Strong visual reasoning
+      "system": "..."
+    },
+    "retrieval_agent": {
+      "type": "subagent",
+      "model": "nemotron-lightning",    // Fast search/synthesis
+      "system": "..."
+    },
+    "omni_router": {
+      "type": "subagent",
+      "model": "nemotron-lightning",    // Fast classification
+      "system": "..."
+    }
+  }
+}
+```
+
+### 3. Recommended Model-to-Agent Mapping
+
+| Agent | Workload Characteristics | Recommended Model Traits | Example Models |
+|-------|-------------------------|--------------------------|----------------|
+| **strategist_agent** | Deep analysis, multi-step planning, legal/compliance, large context | High reasoning, large context window (100k+) | nemotron-3-ultra, claude-sonnet, gpt-4o |
+| **coder_agent** | Code generation, debugging, refactoring, API design | Fast inference, code-specialized, strict output | nemotron-lightning, claude-sonnet, gpt-4o |
+| **lightweight_agent** | Summaries, definitions, quick answers | Low latency, cheap, concise | gpt-4o-mini, claude-haiku, nemotron-lightning |
+| **vision_agent** | Diagram design, UI mockups, visual reasoning | Multimodal or strong text-to-diagram | claude-sonnet, gpt-4o, nemotron-ultra |
+| **retrieval_agent** | Code search, pattern matching, synthesis | Fast, good at synthesis | nemotron-lightning, claude-haiku |
+| **omni_router** | Classification, token estimation, routing logic | Fast, reliable classification | nemotron-lightning, gpt-4o-mini |
+
+### 4. Environment-Specific Overrides
+
+Use different models for dev vs prod:
+
+```json
+// .opencode/opencode.json (committed)
+{
+  "models": {
+    "strategist-model": { "provider": "nvidia", "model": "nvidia/nemotron-3-ultra-550b-a55b" },
+    "coder-model": { "provider": "nvidia", "model": "nvidia/nemotron-3.5-lightning-30b-a3b" }
+  },
+  "agents": {
+    "strategist_agent": { "model": "strategist-model" },
+    "coder_agent": { "model": "coder-model" }
+  }
+}
+
+// .opencode/opencode.local.json (gitignored - per-developer overrides)
+{
+  "models": {
+    "strategist-model": { "provider": "anthropic", "model": "claude-3-5-sonnet-20241022" },
+    "coder-model": { "provider": "openai", "model": "gpt-4o-2024-11-20" }
+  }
+}
+```
+
+### 5. Cost Optimization Strategies
+
+| Strategy | Implementation |
+|----------|----------------|
+| **Tiered models** | Use cheap models (haiku, 4o-mini) for lightweight/retrieval; premium for strategist/coder |
+| **Local dev overrides** | Use `.opencode.local.json` with local Ollama models for free inference |
+| **Request routing** | Route simple Q&A to lightweight_agent automatically |
+| **Context summarization** | Auto-summarize at 900k tokens to avoid premium model costs |
+
+---
+
 ## How to Add These Skills to Other Projects/Repos
 
 ### Method 1: Copy the Skill Directory (Recommended)
