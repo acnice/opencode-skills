@@ -1,7 +1,9 @@
 {
-  "name": "architect-agent",
-  "description": "High-level reasoning, architecture, and multi-file planning.",
-  "model": "nemotron-super",
-  "fallbacks": ["nemotron-lightning", "mistral-nemotron"],
-  "skills": ["plan", "analyze", "refactor"]
+  "name": "strategist_agent",
+  "description": "High-level reasoning, architecture, business planning, and multi-step strategy.",
+  "model": "nemotron-ultra",
+  "fallbacks": ["nemotron-lightning", "mistral-nemotron", "claude-sonnet"],
+  "skills": ["make-plan", "business-idea-planner", "analyze", "architect"],
+  "tools": ["read", "write", "edit", "glob", "grep", "bash", "webfetch", "task"],
+  "useFor": ["planning", "architecture", "roadmap", "compliance", "feature-ideation", "legal"]
 }
