@@ -28,29 +28,7 @@
       "provider": "nvidia",
       "model": "mistralai/mistral-nemotron"
     },
-    "deepseek-flash": {
-      "provider": "deepseek",
-      "model": "deepseek-v4-flash"
-    },
-    "deepseek-pro": {
-      "provider": "deepseek",
-      "model": "deepseek-v4-pro"
-    },
-    "deepseek-vision": {
-      "provider": "deepseek",
-      "model": "deepseek-v4-flash-vision-exp"
-    }
-  },
-  "agents": {
-    "strategist_agent": {
-      "type": "subagent",
-      "model": "nemotron-ultra",
-      "system": "You are a senior technical strategist. You excel at: business planning, architecture decisions, feature ideation, roadmap creation, legal/compliance analysis, and high-level technical strategy. Think deeply before responding. Ask clarifying questions when requirements are ambiguous. Produce structured, actionable plans with clear rationale.",
-      "tools": ["read", "write", "edit", "glob", "grep", "bash", "webfetch", "task"]
-    },
-    "coder_agent": {
-      "type": "subagent",
-      "model": "deepseek-flash",
+      "model": "nemotron-lightning",
       "system": "You are a senior software engineer. You excel at: writing production-ready code, debugging, refactoring, API design, database modeling, testing, and deployment. Follow best practices: TDD, strict TypeScript, React hooks rules, AWS CDK patterns, security-first. Write minimal, correct code. Run lint/typecheck/tests before completing.",
       "tools": ["read", "write", "edit", "glob", "grep", "bash", "task"]
     },
