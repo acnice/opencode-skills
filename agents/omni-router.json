@@ -1,9 +1,0 @@
-{
-  "name": "omni_router",
-  "description": "Classifies requests and routes to specialized agents with fallback chains.",
-  "model": "nemotron-lightning",
-  "fallbacks": ["nemotron-ultra", "deepseek-flash"],
-  "skills": ["omni_route", "classify", "route", "fallback"],
-  "tools": ["read", "write", "edit", "glob", "grep", "bash", "task"],
-  "useFor": ["routing", "all-requests", "auto-classification"]
-}

@@ -1,9 +1,0 @@
-{
-  "name": "retrieval_agent",
-  "description": "Codebase search, pattern matching, and dependency tracing.",
-  "model": "nemotron-lightning",
-  "fallbacks": ["nemotron-ultra", "deepseek-flash", "deepseek-pro"],
-  "skills": ["search", "find", "trace", "grep", "glob"],
-  "tools": ["read", "glob", "grep", "bash"],
-  "useFor": ["retrieval", "search", "find", "lookup", "semantic-search", "rag", "dependency"]
-}

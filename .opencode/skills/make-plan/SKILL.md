@@ -34,6 +34,15 @@ instructions:
     At the start of every plan, announce:
     "Using writing-plans skill to generate the implementation plan."
 
+  # --- EXPLORATION (delegate, do not read everything yourself) ---
+  - >
+    Before drafting the plan, delegate codebase discovery to the @explore
+    subagent via the task tool. Ask it to locate the relevant files, entry
+    points, existing patterns, and conventions, and to return a short cited
+    summary (paths with line numbers). Work from that summary instead of
+    reading many files in this session. Read a file directly only when you
+    already know it is the specific file you need.
+
   # --- WORKTREE REQUIREMENT ---
   - >
     Plans must assume execution inside a dedicated worktree created by

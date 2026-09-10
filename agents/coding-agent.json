@@ -1,9 +1,0 @@
-{
-  "name": "coder_agent",
-  "description": "Writes, fixes, refactors, and explains production code.",
-  "model": "nemotron-lightning",
-  "fallbacks": ["nemotron-ultra", "deepseek-flash", "deepseek-pro"],
-  "skills": ["implement-feature", "code-review", "code-edit", "code-explain", "test"],
-  "tools": ["read", "write", "edit", "glob", "grep", "bash", "task"],
-  "useFor": ["coding", "debug", "refactor", "implement", "api", "database", "test", "build", "deploy"]
-}
