@@ -46,14 +46,33 @@ Then check the `mode=subagent` stream lines in `~/.local/share/opencode/log/open
 
 If an agent streams a different model, the config wasn't picked up (restart) or the model reference is malformed.
 
-### Global config example (`~/.config/opencode/opencode.json`)
+### Config template and where it goes
 
-Configure at global scope so it applies everywhere. opencode's real schema uses `agent` (singular), `provider` (singular), `small_model`, and `default_agent`. Set `small_model` so title/summary/compaction system agents use a cheap model instead of the driver.
+A ready-to-use template lives at [`.opencode/opencode.json`](.opencode/opencode.json) in this repo. Copy it into the scope you want:
+
+| Scope | Path | Applies to |
+|-------|------|------------|
+| **Project (local)** | `<project>/.opencode/opencode.json` | Only that project. This is where the template ships. |
+| **Global** | `~/.config/opencode/opencode.json` | Every project. Note: `~/.opencode/` is **not** read. |
+
+opencode also accepts `<project>/opencode.json` or `<project>/opencode.jsonc` for project scope. Configs from each scope are deep-merged, with project overriding global.
+
+```bash
+# Project-local (copy the shipped template as-is)
+mkdir -p .opencode
+cp /path/to/opencode-skills/.opencode/opencode.json .opencode/opencode.json
+
+# Global (applies everywhere)
+mkdir -p ~/.config/opencode
+cp /path/to/opencode-skills/.opencode/opencode.json ~/.config/opencode/opencode.json
+```
+
+The shipped template is the full version — it includes `temperature` and complete agent prompts. The abbreviated snippet below shows the same structure. opencode's schema uses `agent` (singular), `provider` (singular), `small_model`, and `default_agent`. Set `small_model` so title/summary/compaction system agents use a cheap model instead of the driver.
 
 ```json
 {
   "$schema": "https://opencode.ai/config.json",
-  "small_model": "nvidia/nvidia/nemotron-3.5-lightning-30b-a3b",
+  "small_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
   "provider": {
     "nvidia": {
       "options": {
@@ -106,6 +125,28 @@ Notes:
 ---
 
 ## How to Add These Skills to Other Projects/Repos
+
+### Skill locations and scopes
+
+opencode scans for `**/SKILL.md` inside each skill directory. Choose the scope you want:
+
+| Scope | Path | Applies to |
+|-------|------|------------|
+| **Project (local)** | `<project>/.opencode/skills/<name>/SKILL.md` | Only that project. This is where the skills in this repo live. |
+| **Global** | `~/.config/opencode/skills/<name>/SKILL.md` | Every project. Note: `~/.opencode/` is **not** read. |
+| **External (auto-loaded)** | `~/.claude/skills/<name>/SKILL.md`, `~/.agents/skills/<name>/SKILL.md` | Auto-detected by opencode; no config needed. |
+
+`skill` and `skills` are both accepted directory names. Register skills from other locations with `skills.paths` (scanned recursively) and `skills.urls` in `opencode.json`.
+
+```bash
+# Project-local (all skills into the target project)
+mkdir -p .opencode/skills
+cp -r /path/to/opencode-skills/.opencode/skills/* .opencode/skills/
+
+# Global (all skills available everywhere)
+mkdir -p ~/.config/opencode/skills
+cp -r /path/to/opencode-skills/.opencode/skills/* ~/.config/opencode/skills/
+```
 
 ### Method 1: Copy the Skill Directory (Recommended)
 
@@ -176,10 +217,10 @@ npm install @your-org/opencode-skill-business-idea-planner
 
 ## Skill Structure
 
-Each skill follows this structure:
+Each skill follows this structure, under either the project (`.opencode/skills/`) or global (`~/.config/opencode/skills/`) root:
 
 ```
-.opencode/skills/
+<skills-root>/
 └── skill-name/
     └── SKILL.md          # Main skill definition (required)
 ```
@@ -196,7 +237,7 @@ description: Brief description of what the skill does and when to use it
 
 ## Using Skills in opencode
 
-Once added to your project's `.opencode/skills/` directory, skills are automatically available. Use them by:
+Once added to your project's `.opencode/skills/` directory (or the global `~/.config/opencode/skills/`), skills are automatically available. Use them by:
 
 1. **Explicit invocation**: Reference the skill by name in your prompt
 2. **Auto-selection**: opencode will automatically select relevant skills based on context
@@ -205,7 +246,7 @@ Once added to your project's `.opencode/skills/` directory, skills are automatic
 
 ## Creating Your Own Skills
 
-1. Create a new directory under `.opencode/skills/your-skill-name/`
+1. Create a new directory under `.opencode/skills/your-skill-name/` (project) or `~/.config/opencode/skills/your-skill-name/` (global)
 2. Add a `SKILL.md` file with frontmatter and instructions
 3. Follow the patterns in existing skills:
    - Clear description of behavior
