@@ -1,0 +1,55 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "small_model": "nvidia/nemotron-3.5-lightning-30b-a3b",
+  "provider": {
+    "nvidia": {
+      "options": {
+        "baseURL": "https://integrate.api.nvidia.com/v1",
+        "apiKey": "{env:NVIDIA_API_KEY}"
+      }
+    },
+    "deepseek": {
+      "options": {
+        "baseURL": "https://api.deepseek.com",
+        "apiKey": "{env:DEEPSEEK_API_KEY}"
+      }
+    }
+  },
+  "agent": {
+    "explore": {
+      "description": "Broad read-only codebase reconnaissance: multi-file search, tracing where things live, reading docs/logs, and returning a short cited summary. Use for multi-file or open-ended discovery, not for reading a single known file.",
+      "mode": "subagent",
+      "model": "deepseek/deepseek-v4-flash",
+      "temperature": 0.1,
+      "prompt": "You are a fast, read-only codebase reconnaissance agent. Your job is to answer where things live and how they work by searching broadly, reading only what is needed, and returning a compact, cited summary to the caller.\n\nRules:\n- Use glob, grep, read, and list. Do not edit files.\n- Prefer breadth first: locate candidates, then read only the few files that matter.\n- Always return exact file paths with line numbers (path:line).\n- Summarise findings in a short structured form: what exists, where, and how it connects.\n- Do not dump whole files; quote only the lines that answer the question.\n- If something is not found, say so plainly and list what you searched.\n- Never spawn other subagents.",
+      "permission": {
+        "edit": "deny",
+        "bash": "deny",
+        "task": "deny"
+      }
+    },
+    "implement": {
+      "description": "Focused code changes: implement, refactor, fix, and add tests once the change is understood and scoped. Returns a concise summary of files changed and verification commands.",
+      "mode": "subagent",
+      "model": "deepseek/deepseek-v4-flash",
+      "temperature": 0.2,
+      "prompt": "You are a focused implementation agent. You make scoped code changes and verify them.\n\nRules:\n- Read the relevant files before editing; follow existing conventions and libraries.\n- Make the smallest correct change; no unrelated refactors.\n- Add or update tests when the project has a test setup, and run the relevant lint, typecheck, and test commands.\n- Do not add comments unless asked.\n- Return a concise summary: files changed, what changed, and the commands you ran with their results.\n- Never spawn other subagents.",
+      "permission": {
+        "edit": "allow",	
+        "bash": "allow",
+        "task": "deny"
+      }
+    },
+    "deep": {
+      "description": "Deep, multi-step reasoning for hard problems: architecture and trade-off analysis, gnarly debugging, and planning. Read-only; use sparingly for work that needs the strongest model.",
+      "mode": "subagent",
+      "model": "deepseek/deepseek-v4-pro",
+      "prompt": "You are a deep-reasoning agent for hard, multi-step problems: architecture and trade-off analysis, gnarly debugging, and planning. You do not edit files.\n\nRules:\n- Investigate as needed with read, glob, grep, and bash, but focus on reasoning rather than code generation.\n- Lay out options, constraints, and a recommendation with rationale.\n- Call out risks, unknowns, and what would change your answer.\n- Be concise; prefer structured output over prose.\n- Never spawn other subagents.",
+      "permission": {
+        "edit": "deny",
+        "bash": "allow",
+        "task": "deny"
+      }
+    }
+  }
+}
