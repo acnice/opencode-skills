@@ -1,21 +1,6 @@
 ---
 name: grilling
-description: >
-  Grill the user relentlessly about a plan, decision, or idea. Use when the user wants to stress-test their thinking, or uses any 'grill' trigger phrases.
-
-capabilities:
-  - reasoning
-  - planning
-  - critique
-  - adversarial_questioning
-  - design_tree_construction
-  - decision_prioritization
-  - similarity_detection
-  - risk_assessment
-  - tradeoff_analysis
-  - adr_generation
-  - codebase_exploration
-  - convergence_detection
+description: Grill the user relentlessly about a plan, decision, or idea. Use when the user wants to stress-test their thinking, or uses any 'grill' trigger phrases.
 ---
 
 triggers:

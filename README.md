@@ -11,6 +11,7 @@ A collection of reusable skills for [opencode](https://opencode.ai) — speciali
 | **code-review** | Two-axis review (Standards + Spec) of all changes since a fixed point. Runs parallel sub-agents for React/TS/CDK/AWS/GitHub Actions standards and spec compliance | "review since main", "code review this PR", "audit this diff" |
 | **make-plan** | Create comprehensive, implementation-ready plans with TDD-driven tasks, exact file paths, commands, and expected outputs. Designed for engineers with minimal context | "make a plan", "write a plan", "implementation plan", "how do I build this" |
 | **implement-feature** | Implement features using community-best patterns: TypeScript strict, React hooks, CDK constructs, DynamoDB, GitHub Actions, Jest/RTL, ESLint/Prettier, pre-commit hooks. Mandatory review-before-commit | "implement this feature", "build this", "add endpoint", "cdk stack change" |
+| **frontend-design** | Produce thoughtful, high-quality frontend design work focused on UX clarity, layout hierarchy, spacing, interaction patterns, and design rationale | "design this UI", "improve this layout", "design the dashboard", "clean up this flow" |
 
 ---
 
@@ -177,6 +178,7 @@ ln -s ../skills/opencode-skills/.opencode/skills/grilling .opencode/skills/grill
 ln -s ../skills/opencode-skills/.opencode/skills/code-review .opencode/skills/code-review
 ln -s ../skills/opencode-skills/.opencode/skills/make-plan .opencode/skills/make-plan
 ln -s ../skills/opencode-skills/.opencode/skills/implement-feature .opencode/skills/implement-feature
+ln -s ../skills/opencode-skills/.opencode/skills/frontend-design .opencode/skills/frontend-design
 ```
 
 ### Method 3: npm/yarn/pnpm Package (For Distribution)

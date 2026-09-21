@@ -6,19 +6,11 @@ description: >
   AWS CDK architecture patterns, DynamoDB modeling, GitHub Actions CI,
   Jest/RTL testing, ESLint/Prettier, and pre-commit hooks. Includes mandatory
   review-before-commit. Use only after a plan exists.
-
-risk: high
-source: community
-date_added: "2026-02-27"
-
-capabilities:
-  - implementation
-  - test_authoring
-  - infra_authoring
-  - ci_cd_configuration
-  - linting_setup
-  - hooks_setup
-  - local_review
+metadata:
+  risk: high
+  source: community
+  date_added: "2026-02-27"
+---
 
 triggers:
   - "implement this feature"
@@ -26,7 +18,6 @@ triggers:
   - "add endpoint"
   - "add page"
   - "cdk stack change"
----
 
 instructions:
   # --- PRECONDITIONS ---
