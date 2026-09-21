@@ -6,17 +6,6 @@ description: >
   React/TypeScript best practices, AWS/CDK patterns, and GitHub Actions security
   guidelines? Axis 2: Spec — does the code faithfully implement the originating
   issue/spec? Both axes run in parallel sub-agents and are aggregated cleanly.
-
-capabilities:
-  - code_analysis
-  - diff_inspection
-  - standards_enforcement
-  - spec_validation
-  - parallel_subagents
-  - smell_detection
-  - git_operations
-  - cloud_architecture_review
-  - frontend_review
 ---
 
 triggers:

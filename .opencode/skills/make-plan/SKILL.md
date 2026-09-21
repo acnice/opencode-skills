@@ -6,19 +6,11 @@ description: >
   yet. Produces deterministic, bite-sized, TDD-driven tasks with exact file
   paths, commands, and expected outputs. Designed for engineers with minimal
   context about the codebase.
-
-risk: critical
-source: community
-date_added: "2026-02-27"
-
-capabilities:
-  - planning
-  - decomposition
-  - architecture_mapping
-  - tdd_workflow
-  - file_path_resolution
-  - spec_alignment
-  - execution_handoff
+metadata:
+  risk: critical
+  source: community
+  date_added: "2026-02-27"
+---
 
 triggers:
   - "make a plan"
@@ -26,7 +18,6 @@ triggers:
   - "implementation plan"
   - "how do I build this"
   - "plan this feature"
----
 
 instructions:
   # --- ANNOUNCEMENT ---
